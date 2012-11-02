@@ -5,8 +5,8 @@ host="$( hostname )"
 
 # --
 
-function log_h () { echo "=== $1 ==="; echo; }
-function log_f () { echo; echo; }
+function log_h () { echo -e "=== $@ ===\n"; }
+function log_f () { echo -e '\n'; }
 function log_c () { log_h "$@"; "$@" | sed 's!^!  !'; log_f; }
 
 # --
@@ -32,7 +32,7 @@ function memory () {                                            # {{{1
   m="$(( (100 * (total - free - buffers - cached)) / total ))"
   s="$(( (100 * (sw_total - sw_free - sw_cached)) / sw_total ))"
 
-  printf 'Memory usage: %s%%, swap usage: %s%%\n' "$m" "$s"
+  printf 'memory: %s%%, swap: %s%%\n' "$m" "$s"                 # ????
 }                                                               # }}}1
 
 function system () {                                            # {{{1
@@ -40,34 +40,39 @@ function system () {                                            # {{{1
   {
     uname -a
     lsb_release -s -d
+    echo
     uptime
     memory
+    echo "$( ls -d /proc/[0-9]* 2>/dev/null | wc -l ) processes"
   } | sed 's!^!  !'
   log_f
 }                                                               # }}}1
 
-
-function filesystems () {
-  log_c df -h $( mount | grep ^/dev | cut -d' ' -f1 )
-}
-
-function packages () {
-# log_c aptitude safe-upgrade -s
+function packages () {                                          # {{{1
+# log_c aptitude safe-upgrade -s                                # TODO
 
   if [ -f /var/run/reboot-required ]; then
     log_c cat /var/run/reboot-required
   else
-    echo -e "\n(no reboot required)\n"
+    echo -e '(no reboot required)\n'
   fi
+}                                                               # }}}1
+
+function filesystems () {                                       # {{{1
+  log_c df -h $( mount | grep ^/dev | cut -d' ' -f1 )
+}                                                               # }}}1
+
+function network () {                                           # {{{1
+  log_c ifconfig
 }                                                               # }}}1
 
 # --
 
-# aptitude update
+# aptitude update                                               # TODO
 
 # --
 
-{
+{                                                               # {{{1
    sed 's!^    !!' <<__END
     From:     felixstegerman@noxqslabs.nl
     To:       felixstegerman@noxqslabs.nl
@@ -76,7 +81,11 @@ function packages () {
 __END
 
   system
-  filesystems
   packages
+  filesystems
+  network
 
-} # | sendmail -t
+} # | sendmail -t                                               # TODO
+                                                                # }}}1
+
+# --
