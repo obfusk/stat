@@ -7,9 +7,11 @@ if ! ( [ "$#" -eq 2 ] || [ "$#" -eq 1 -a "$1" == '--test' ] ); then
   exit 1
 fi
 
-from="${1:-FROM}"
-  to="${2:-TO}"
-test="$3"
+from="$1"
+  to="$2"
+test=no
+
+[ "$#" -eq 1 ] && from=FROM to=TO test=yes
 
 # --
 
@@ -84,7 +86,7 @@ function network () {                                           # {{{1
 }                                                               # }}}1
 
 function send () {                                              # {{{1
-  if [ "$test" == '--test' ]; then less; else sendmail -t; fi
+  if [ "$test" == yes ]; then less; else sendmail -t; fi
 }                                                               # }}}1
 
 # --
