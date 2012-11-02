@@ -1,7 +1,7 @@
 #!/bin/bash
 
-d="$( date +'%F %T' )"
-h="$( hostname )"
+date="$( date +'%F %T' )"
+host="$( hostname )"
 
 # --
 
@@ -11,24 +11,55 @@ function log_c () { log_h "$@"; "$@" | sed 's!^!  !'; log_f; }
 
 # --
 
-function upgrade_req () {
+function memory () {                                            # {{{1
+  local total free buffers cached
+  local sw_total sw_free sw_cached
+  local tok val unit n=0 m s
+
+  while read tok val unit; do
+    case "$tok" in
+     MemTotal:)       total="$val"; (( ++n )) ;;
+     MemFree:)         free="$val"; (( ++n )) ;;
+     Buffers:)      buffers="$val"; (( ++n )) ;;
+     Cached:)        cached="$val"; (( ++n )) ;;
+     SwapTotal:)   sw_total="$val"; (( ++n )) ;;
+     SwapFree:)     sw_free="$val"; (( ++n )) ;;
+     SwapCached:) sw_cached="$val"; (( ++n )) ;;
+    esac
+    (( n >= 7 )) && break
+  done < /proc/meminfo
+
+  m="$(( (100 * (total - free - buffers - cached)) / total ))"
+  s="$(( (100 * (sw_total - sw_free - sw_cached)) / sw_total ))"
+
+  printf 'Memory usage: %s%%, swap usage: %s%%\n' "$m" "$s"
+}                                                               # }}}1
+
+function system () {                                            # {{{1
+  log_h "System"
+  {
+    uname -a
+    lsb_release -s -d
+    uptime
+    memory
+  } | sed 's!^!  !'
+  log_f
+}                                                               # }}}1
+
+
+function filesystems () {
+  log_c df -h $( mount | grep ^/dev | cut -d' ' -f1 )
+}
+
+function packages () {
+# log_c aptitude safe-upgrade -s
+
   if [ -f /var/run/reboot-required ]; then
     log_c cat /var/run/reboot-required
   else
-    echo "(no reboot required)"
+    echo -e "\n(no reboot required)\n"
   fi
-}
-
-function memory () {
-while read tok val unit; do
-		case "$tok" in
-			MemTotal:) total=${val};;
-			MemFree:) free=${val};;
-			Buffers:) buffers=${val};;
-			Cached:) cached=${val};;
-		esac
-		[ -n "${free}" -a -n "${total}" -a -n "${buffers}" -a -n "${cached}" ] && break;
-	done < /proc/meminfo}
+}                                                               # }}}1
 
 # --
 
@@ -37,25 +68,15 @@ while read tok val unit; do
 # --
 
 {
-  cat <<__END | sed 's!^    !!'
+   sed 's!^    !!' <<__END
     From:     felixstegerman@noxqslabs.nl
     To:       felixstegerman@noxqslabs.nl
-    Subject:  status of $h @ $d
+    Subject:  status of $host @ $date
 
 __END
 
-  devs="$( mount | grep ^/dev | cut -d' ' -f1 )"
-
-  log_h "System"
-  {
-    uname -a
-    lsb_release -s -d
-    uptime
-  } | sed 's!^!  !'
-  log_f
-
-  log_c df -h $devs
-
-# log_c aptitude safe-upgrade -s
+  system
+  filesystems
+  packages
 
 } # | sendmail -t
