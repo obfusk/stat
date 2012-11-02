@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# --
+
+if ! ( [ "$#" -eq 2 ] || [ "$#" -eq 1 -a "$1" == '--test' ] ); then
+  echo 'Usage: stat { <from> <to> | --test }' >&2
+  exit 1
+fi
+
+from="${1:-FROM}"
+  to="${2:-TO}"
+test="$3"
+
+# --
+
 date="$( date +'%F %T' )"
 host="$( hostname )"
 
@@ -42,19 +55,23 @@ function system () {                                            # {{{1
     lsb_release -s -d
     echo
     uptime
-    memory
     echo "$( ls -d /proc/[0-9]* 2>/dev/null | wc -l ) processes"
+    memory
   } | sed 's!^!  !'
   log_f
 }                                                               # }}}1
 
 function packages () {                                          # {{{1
-# log_c aptitude safe-upgrade -s                                # TODO
+  if [ "$( id -u )" -eq 0 ]; then
+    log_c aptitude -s safe-upgrade
+  else
+    echo -e '(not root -- skipping package updates check)\n\n'
+  fi
 
   if [ -f /var/run/reboot-required ]; then
     log_c cat /var/run/reboot-required
   else
-    echo -e '(no reboot required)\n'
+    echo -e '(no reboot required)\n\n'
   fi
 }                                                               # }}}1
 
@@ -66,17 +83,21 @@ function network () {                                           # {{{1
   log_c ifconfig
 }                                                               # }}}1
 
+function send () {                                              # {{{1
+  if [ "$test" == '--test' ]; then less; else sendmail -t; fi
+}                                                               # }}}1
+
 # --
 
-# aptitude update                                               # TODO
+[ "$( id -u )" -eq 0 ] && aptitude update
 
 # --
 
 {                                                               # {{{1
    sed 's!^    !!' <<__END
-    From:     felixstegerman@noxqslabs.nl
-    To:       felixstegerman@noxqslabs.nl
-    Subject:  status of $host @ $date
+    From: $from
+    To: $to
+    Subject: status of $host @ $date
 
 __END
 
@@ -85,7 +106,6 @@ __END
   filesystems
   network
 
-} # | sendmail -t                                               # TODO
-                                                                # }}}1
+} | send                                                        # }}}1
 
 # --
