@@ -51,7 +51,7 @@ function memory () {                                            # {{{1
 }                                                               # }}}1
 
 function system () {                                            # {{{1
-  log_h "System"
+  log_h System
   {
     uname -a
     lsb_release -s -d
@@ -85,6 +85,13 @@ function network () {                                           # {{{1
   log_c ifconfig
 }                                                               # }}}1
 
+function services () {                                          # {{{1
+  local x
+  for x in $STAT_SERVICES; do
+    log_c service "$x" status
+  done
+}                                                               # }}}1
+
 function send () {                                              # {{{1
   if [ "$test" == yes ]; then less; else sendmail -t; fi
 }                                                               # }}}1
@@ -107,6 +114,7 @@ __END
   packages
   filesystems
   network
+  services
 
 } | send                                                        # }}}1
 

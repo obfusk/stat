@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# === Installing ===
+#
+#   $ cp -i stat.cron.sample /etc/cron.daily/stat
+#   $ vim /etc/cron.daily/stat
+#   $ chmod +x /etc/cron.daily/stat
+#
+# --
+
+set -e
+
+export STAT_SERVICES=   # e.g. 'nap mongodb'
+
+/path/to/stat.bash from@email.address to@email.address
+
+# --
