@@ -61,7 +61,7 @@ function system () {                                            # {{{1
 
 function packages () {                                          # {{{1
   if [ "$( id -u )" -eq 0 ]; then
-    log_c aptitude -s safe-upgrade
+    log_c aptitude -F%p --disable-columns search \~U
   else
     echo -e '(not root -- skipping package updates check)\n\n'
   fi
