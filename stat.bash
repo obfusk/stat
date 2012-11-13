@@ -2,6 +2,12 @@
 
 # Sets STAT_SUBJECT, pipes output to "$@".
 
+if [ "$#" -ne 0 ]; then
+  cmd=( "$@" )
+else
+  cmd=( cat )
+fi
+
 # --
 
 date="$( date +'%F %T' )"
@@ -89,6 +95,6 @@ function services () {                                          # {{{1
 # --
 
 { system ; packages ; filesystems ; network ; services
-} | STAT_SUBJECT="status of $host @ $date" "$@"
+} | STAT_SUBJECT="status of $host @ $date" "${cmd[@]}"
 
 # --
