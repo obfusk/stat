@@ -1,17 +1,6 @@
 #!/bin/bash
 
-# --
-
-if ! ( [ "$#" -eq 2 ] || [ "$#" -eq 1 -a "$1" == '--test' ] ); then
-  echo 'Usage: stat { <from> <to> | --test }' >&2
-  exit 1
-fi
-
-from="$1"
-  to="$2"
-test=no
-
-[ "$#" -eq 1 ] && from=FROM to=TO test=yes
+# Sets STAT_SUBJECT, pipes output to "$@".
 
 # --
 
@@ -53,6 +42,7 @@ function memory () {                                            # {{{1
 function system () {                                            # {{{1
   log_h System
   {
+    echo "$host @ $date"
     uname -a
     lsb_release -s -d
     echo
@@ -92,30 +82,13 @@ function services () {                                          # {{{1
   done
 }                                                               # }}}1
 
-function send () {                                              # {{{1
-  if [ "$test" == yes ]; then less; else sendmail -t; fi
-}                                                               # }}}1
-
 # --
 
 [ "$( id -u )" -eq 0 ] && aptitude update
 
 # --
 
-{                                                               # {{{1
-   sed 's!^    !!' <<__END
-    From: $from
-    To: $to
-    Subject: status of $host @ $date
-
-__END
-
-  system
-  packages
-  filesystems
-  network
-  services
-
-} | send                                                        # }}}1
+{ system ; packages ; filesystems ; network ; services
+} | STAT_SUBJECT="status of $host @ $date" "$@"
 
 # --

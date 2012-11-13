@@ -12,6 +12,6 @@ set -e
 
 export STAT_SERVICES=   # e.g. 'nap mongodb'
 
-/path/to/stat.bash from@email.address to@email.address
+/path/to/stat.bash /path/to/mailer
 
 # --
