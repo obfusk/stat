@@ -105,6 +105,6 @@ function services () {                                          # {{{1
 # --
 
 { system ; packages ; filesystems ; network ; services
-} | MAILER_SUBJECT="status of $host @ $date" "${cmd[@]}"
+} 2>&1 | MAILER_SUBJECT="status of $host @ $date" "${cmd[@]}"
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
