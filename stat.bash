@@ -1,12 +1,21 @@
 #!/bin/bash
 
-# Sets STAT_SUBJECT, pipes output to "$@".
+# --                                                            ; {{{1
+#
+# File        : stat.bash
+# Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+# Date        : 2013-05-06
+#
+# Copyright   : Copyright (C) 2013  Felix C. Stegerman
+# Licence     : GPLv2
+#
+# Description : Sets MAILER_SUBJECT, pipes output to "$@".
+#
+# --                                                            ; }}}1
 
-if [ "$#" -ne 0 ]; then
-  cmd=( "$@" )
-else
-  cmd=( cat )
-fi
+set -e
+
+if [ "$#" -ne 0 ]; then cmd=( "$@" ); else cmd=( cat ); fi
 
 # --
 
@@ -96,6 +105,6 @@ function services () {                                          # {{{1
 # --
 
 { system ; packages ; filesystems ; network ; services
-} | STAT_SUBJECT="status of $host @ $date" "${cmd[@]}"
+} | MAILER_SUBJECT="status of $host @ $date" "${cmd[@]}"
 
-# --
+# vim: set tw=70 sw=2 sts=2 et fdm=marker :

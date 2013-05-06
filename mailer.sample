@@ -1,6 +1,0 @@
-#!/bin/bash
-
-sendemail -u "$STAT_SUBJECT" -s smtp.gmail.com -o tls=yes \
-  -f '<from>' -t '<to>' -xu '<user>' -xp '<pass>'
-
-# --
