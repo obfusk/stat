@@ -4,7 +4,7 @@
 #
 # File        : stat.bash
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2013-05-06
+# Date        : 2014-02-04
 #
 # Copyright   : Copyright (C) 2013  Felix C. Stegerman
 # Licence     : GPLv2
@@ -81,6 +81,14 @@ function packages () {                                          # {{{1
   else
     echo -e '(no reboot required)\n\n'
   fi
+
+  if [ ! -x "$( which checkrestart )" ]; then
+    echo -e '(checkrestart not found -- skipping)\n\n'
+  elif [ "$( id -u )" -ne 0 ]; then
+    echo -e '(not root -- skipping checkrestart)\n\n'
+  else
+    log_c checkrestart
+  fi
 }                                                               # }}}1
 
 function filesystems () {                                       # {{{1
@@ -88,7 +96,7 @@ function filesystems () {                                       # {{{1
 }                                                               # }}}1
 
 function network () {                                           # {{{1
-  log_c ifconfig
+  log_c /sbin/ifconfig
 }                                                               # }}}1
 
 function services () {                                          # {{{1
