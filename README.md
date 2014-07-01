@@ -32,7 +32,7 @@
   First, install mailer [2].
 
     $ mkdir -p /opt/src
-    $ git clone https://github.com/noxqsgit/stat.git /opt/src/stat
+    $ git clone https://github.com/obfusk/stat.git /opt/src/stat
     $ cp -i /opt/src/stat/stat.cron.sample /etc/cron.daily/stat
     $ vim /etc/cron.daily/stat
     $ chmod +x /etc/cron.daily/stat
@@ -53,7 +53,7 @@
   --- http://www.gnu.org/licenses/gpl-3.0.html
 
   [2] mailer
-  --- https://github.com/noxqsgit/mailer
+  --- https://github.com/obfusk/mailer
 
 []: }}}1
 
