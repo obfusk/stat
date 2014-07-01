@@ -2,10 +2,10 @@
 
     File        : README.md
     Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-    Date        : 2014-02-04
+    Date        : 2014-07-01
 
     Copyright   : Copyright (C) 2013  Felix C. Stegerman
-    Version     : 0.4.1
+    Version     : 0.4.2
 
 []: }}}1
 
@@ -42,15 +42,15 @@
 ## License
 []: {{{1
 
-  GPLv2 [1].
+  GPLv3+ [1].
 
 []: }}}1
 
 ## References
 []: {{{1
 
-  [1] GNU General Public License, version 2
-  --- http://www.opensource.org/licenses/GPL-2.0
+  [1] GNU General Public License, version 3
+  --- http://www.gnu.org/licenses/gpl-3.0.html
 
   [2] mailer
   --- https://github.com/noxqsgit/mailer

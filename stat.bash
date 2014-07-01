@@ -4,10 +4,10 @@
 #
 # File        : stat.bash
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2014-02-04
+# Date        : 2014-07-01
 #
 # Copyright   : Copyright (C) 2013  Felix C. Stegerman
-# Licence     : GPLv2
+# Licence     : GPLv3+
 #
 # Description : Sets MAILER_SUBJECT, pipes output to "$@".
 #
@@ -106,13 +106,19 @@ function services () {                                          # {{{1
   done
 }                                                               # }}}1
 
+function etc () {                                               # {{{1
+  if [ -x "$( which mailq )" ]; then
+    log_c mailq
+  fi
+}                                                               # }}}1
+
 # --
 
 [ "$( id -u )" -eq 0 ] && aptitude update
 
 # --
 
-{ system ; packages ; filesystems ; network ; services
+{ system ; packages ; filesystems ; network ; services; etc
 } 2>&1 | MAILER_SUBJECT="status of $host @ $date" "${cmd[@]}"
 
 # vim: set tw=70 sw=2 sts=2 et fdm=marker :
