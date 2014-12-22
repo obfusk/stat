@@ -81,6 +81,7 @@ function packages () {                                          # {{{1
 
   if [ -f /var/run/reboot-required ]; then
     log_c cat /var/run/reboot-required
+    log_c cat /var/run/reboot-required.pkgs
   else
     echo -e '(no reboot required)\n\n'
   fi
