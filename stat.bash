@@ -4,7 +4,7 @@
 #
 # File        : stat.bash
 # Maintainer  : Felix C. Stegerman <flx@obfusk.net>
-# Date        : 2014-07-01
+# Date        : 2014-12-22
 #
 # Copyright   : Copyright (C) 2013  Felix C. Stegerman
 # Licence     : GPLv3+
@@ -33,7 +33,7 @@ function log_c () { log_h "$@"; "$@" | sed 's!^!  !'; log_f; }
 function memory () {                                            # {{{1
   local total free buffers cached
   local sw_total sw_free sw_cached
-  local tok val unit n=0 m s
+  local tok val unit n=0 m s=none
 
   while read tok val unit; do
     case "$tok" in
@@ -48,10 +48,13 @@ function memory () {                                            # {{{1
     (( n >= 7 )) && break
   done < /proc/meminfo
 
-  m="$(( (100 * (total - free - buffers - cached)) / total ))"
-  s="$(( (100 * (sw_total - sw_free - sw_cached)) / sw_total ))"
+  m="$(( (100 * (total - free - buffers - cached)) / total ))%"
 
-  printf 'memory: %s%%, swap: %s%%\n' "$m" "$s"                 # ????
+  if (( sw_total > 0 )); then
+    s="$(( (100 * (sw_total - sw_free - sw_cached)) / sw_total ))%"
+  fi
+
+  printf 'memory: %s, swap: %s\n' "$m" "$s"                     # ????
 }                                                               # }}}1
 
 function system () {                                            # {{{1
